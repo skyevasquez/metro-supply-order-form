@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Order Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Supply Order Form</h1>
+            <p>Submit your store supply orders</p>
+        </header>
+
+        <form id="orderForm" class="order-form">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h2>Order Information</h2>
+                
+                <div class="form-group">
+                    <label for="employeeName">Employee Name *</label>
+                    <input type="text" id="employeeName" name="employeeName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="store">Select Store *</label>
+                    <select id="store" name="store" required>
+                        <option value="">Choose a store...</option>
+                        <option value="ARCHER">ARCHER</option>
+                        <option value="NEWBERRY">NEWBERRY</option>
+                        <option value="CHIEFLAND">CHIEFLAND</option>
+                        <option value="INVERNESS">INVERNESS</option>
+                        <option value="HOMOSASSA">HOMOSASSA</option>
+                        <option value="CRYSTAL RIVER">CRYSTAL RIVER</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="orderDate">Order Date *</label>
+                    <input type="date" id="orderDate" name="orderDate" required>
+                </div>
+            </div>
+
+            <!-- Office Supplies Section -->
+            <div class="form-section">
+                <h2>Office Supplies</h2>
+                <div id="officeSupplies" class="supplies-container">
+                    <div class="supply-item">
+                        <div class="supply-inputs">
+                            <input type="text" placeholder="Item name" class="item-name">
+                            <input type="number" placeholder="Quantity" class="item-quantity" min="1">
+                            <button type="button" class="remove-item" onclick="removeSupplyItem(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addSupplyItem('officeSupplies')">+ Add Office Supply</button>
+            </div>
+
+            <!-- Cleaning Supplies Section -->
+            <div class="form-section">
+                <h2>Cleaning Supplies</h2>
+                <div id="cleaningSupplies" class="supplies-container">
+                    <div class="supply-item">
+                        <div class="supply-inputs">
+                            <input type="text" placeholder="Item name" class="item-name">
+                            <input type="number" placeholder="Quantity" class="item-quantity" min="1">
+                            <button type="button" class="remove-item" onclick="removeSupplyItem(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addSupplyItem('cleaningSupplies')">+ Add Cleaning Supply</button>
+            </div>
+
+            <!-- Additional Notes Section -->
+            <div class="form-section">
+                <h2>Additional Notes</h2>
+                <div class="form-group">
+                    <label for="notes">Special instructions or additional information</label>
+                    <textarea id="notes" name="notes" rows="4" placeholder="Enter any special instructions, delivery preferences, or additional information..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Submit Order</button>
+                <button type="button" class="preview-btn" onclick="previewOrder()">Preview Order</button>
+            </div>
+        </form>
+
+        <!-- Order Preview Modal -->
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Order Preview</h2>
+                    <span class="close" onclick="closePreview()">&times;</span>
+                </div>
+                <div id="previewContent" class="modal-body">
+                    <!-- Preview content will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closePreview()">Close</button>
+                    <button type="button" onclick="submitFromPreview()">Submit Order</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <h3>Order Submitted Successfully!</h3>
+            <p>Your supply order has been submitted and will be processed shortly.</p>
+            <button onclick="resetForm()">Submit Another Order</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
