@@ -276,8 +276,8 @@ async function submitOrder() {
             setDefaultDate();
             
             // Clear dynamic items and add default ones
-            document.getElementById('officeItems').innerHTML = '';
-            document.getElementById('cleaningItems').innerHTML = '';
+            document.getElementById('officeSupplies').innerHTML = '';
+            document.getElementById('cleaningSupplies').innerHTML = '';
             addOfficeItem();
             addCleaningItem();
         } else {
