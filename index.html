@@ -10,11 +10,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>Supply Order Form</h1>
-            <p>Submit your store supply orders</p>
+            <div class="header-inner">
+                <div>
+                    <h1>Metro Supply Orders</h1>
+                    <p>Streamlined ordering for Metro by T-Mobile locations</p>
+                </div>
+                <div class="header-meta">V1 • Secure submission</div>
+            </div>
         </header>
 
-        <form id="orderForm" class="order-form">
+        <form id="orderForm" class="order-form" novalidate>
             <!-- Basic Information Section -->
             <div class="form-section">
                 <h2>Order Information</h2>
@@ -90,11 +95,11 @@
         </form>
 
         <!-- Order Preview Modal -->
-        <div id="previewModal" class="modal">
+        <div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Order Preview</h2>
-                    <span class="close" onclick="closePreview()">&times;</span>
+                    <h2 id="previewTitle">Order Preview</h2>
+                    <span class="close" onclick="closePreview()" aria-label="Close">&times;</span>
                 </div>
                 <div id="previewContent" class="modal-body">
                     <!-- Preview content will be inserted here -->
@@ -108,10 +113,16 @@
 
         <!-- Success Message -->
         <div id="successMessage" class="success-message" style="display: none;">
-            <h3>Order Submitted Successfully!</h3>
-            <p>Your supply order has been submitted and will be processed shortly.</p>
-            <button onclick="resetForm()">Submit Another Order</button>
+            <div class="success-card">
+                <h3>Order Submitted Successfully!</h3>
+                <p>Your supply order has been submitted and will be processed shortly.</p>
+                <button class="success-btn" onclick="resetForm()">Submit Another Order</button>
+            </div>
         </div>
+        <footer class="app-footer">
+            <div>© 2025 Metro Wireless Plus</div>
+            <div>Need help? Contact IT</div>
+        </footer>
     </div>
 
     <script src="script.js"></script>

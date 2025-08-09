@@ -39,8 +39,16 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Handle form submission
-app.post('/submit-order', async (req, res) => {
+// Health check endpoints (mirror Vercel API route locally)
+app.get('/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Reusable submission handler
+async function handleSubmit(req, res) {
     console.log('📝 Form submission received at:', new Date().toISOString());
     console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
     
@@ -166,15 +174,15 @@ app.post('/submit-order', async (req, res) => {
             errorCode: error.code
         });
     }
-});
+}
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
+// Handle form submission
+app.post('/submit-order', handleSubmit);
+// Mirror Vercel function route for local dev
+app.post('/api/submit-order', handleSubmit);
 
-// Test email endpoint
-app.post('/test-email', async (req, res) => {
+// Test email endpoint (reusable)
+async function handleTestEmail(req, res) {
     try {
         console.log('🧪 Testing email configuration...');
         
@@ -224,7 +232,10 @@ app.post('/test-email', async (req, res) => {
             errorCode: error.code
         });
     }
-});
+}
+
+app.post('/test-email', handleTestEmail);
+app.post('/api/test-email', handleTestEmail);
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

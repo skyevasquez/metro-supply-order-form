@@ -243,7 +243,7 @@ async function submitOrder() {
         console.log('📤 Sending order data:', formData);
         
         // Send to server
-        const response = await fetch('/submit-order', {
+        const response = await fetch('/api/submit-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
