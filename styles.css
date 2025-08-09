@@ -711,3 +711,5 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px var(--ring); b
 .success-btn { background: linear-gradient(180deg, var(--brand), var(--brand-600)); color: white; border: 0; padding: 12px 18px; border-radius: 10px; font-weight: 600; }
 
 .app-footer { background: linear-gradient(180deg, #ffffff, #fafafa); color: var(--text-2); border-top: 1px solid var(--border); padding: 16px 28px; display: flex; justify-content: space-between; }
+.app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.app-footer a:hover { text-decoration-thickness: 2px; }
