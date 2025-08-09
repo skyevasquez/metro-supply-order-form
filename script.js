@@ -260,13 +260,26 @@ async function submitOrder() {
         
         console.log('📡 Response status:', response.status);
         console.log('📡 Response ok:', response.ok);
+        console.log('📡 Response headers:', response.headers.get('content-type'));
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('❌ HTTP Error Response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
         
-        const result = await response.json();
-        console.log('📥 Server response:', result);
+        const responseText = await response.text();
+        console.log('📥 Raw response text:', responseText);
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+            console.log('📥 Parsed JSON response:', result);
+        } catch (parseError) {
+            console.error('❌ JSON Parse Error:', parseError);
+            console.error('❌ Response text that failed to parse:', responseText);
+            throw new Error(`Failed to parse server response: ${parseError.message}`);
+        }
         
         if (result.success) {
             // Save to localStorage as backup
@@ -280,13 +293,16 @@ async function submitOrder() {
             
             // Reset form
             document.getElementById('orderForm').reset();
-            setDefaultDate();
+            
+            // Set date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
             
             // Clear dynamic items and add default ones
             document.getElementById('officeSupplies').innerHTML = '';
             document.getElementById('cleaningSupplies').innerHTML = '';
-            addOfficeItem();
-            addCleaningItem();
+            addSupplyItem('officeSupplies');
+            addSupplyItem('cleaningSupplies');
         } else {
             throw new Error(result.message || 'Failed to submit order');
         }
