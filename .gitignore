@@ -45,6 +45,22 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+.env.local
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+serviceAccountKey.json
+.runtimeconfig.json
+
+# Temporary files
+.temp_rollback/
+dataconnect/
+functions/
+src/dataconnect-generated/
 
 # OS generated files
 .DS_Store

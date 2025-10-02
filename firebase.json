@@ -1,0 +1,22 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.md",
+      "package.json",
+      "package-lock.json",
+      "server.js",
+      "scripts/**",
+      "FIREBASE_MIGRATION_PLAN.md",
+      "serviceAccountKey.json"
+    ],
+    "rewrites": []
+  }
+}

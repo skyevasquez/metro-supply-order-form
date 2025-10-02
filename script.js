@@ -6,7 +6,78 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add form submission handler
     document.getElementById('orderForm').addEventListener('submit', handleFormSubmit);
+    
+    // Check authentication status
+    checkAuthStatus();
 });
+
+// Check if user is authenticated
+function checkAuthStatus() {
+    // Import Firebase auth dynamically
+    import('./src/firebase/auth.js').then(({ onAuthChange }) => {
+        onAuthChange(({ user, profile }) => {
+            if (!user) {
+                // Not authenticated, redirect to login
+                window.location.href = '/auth.html';
+            } else {
+                // Authenticated, store user info globally
+                window.currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || profile?.displayName || 'User',
+                    store: profile?.store || '',
+                    phoneNumber: profile?.phoneNumber || '',
+                    role: profile?.role || 'employee'
+                };
+                
+                // Pre-fill store field if user has assigned store
+                if (profile?.store) {
+                    const storeSelect = document.getElementById('store');
+                    if (storeSelect) {
+                        storeSelect.value = profile.store;
+                    }
+                }
+                
+                // Pre-fill employee name
+                const employeeNameInput = document.getElementById('employeeName');
+                if (employeeNameInput && !employeeNameInput.value) {
+                    employeeNameInput.value = window.currentUser.displayName;
+                }
+                
+                // Show user info in header
+                showUserInfo(window.currentUser);
+            }
+        });
+    }).catch((error) => {
+        console.error('Failed to load Firebase auth:', error);
+        // If Firebase fails to load, continue anyway (fallback to no auth)
+    });
+}
+
+// Show user info in header
+function showUserInfo(user) {
+    const headerMeta = document.querySelector('.header-meta');
+    if (headerMeta) {
+        headerMeta.innerHTML = `
+            <span style="margin-right: 15px;">👤 ${user.displayName}</span>
+            <button onclick="handleSignOut()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; cursor: pointer; font-size: 14px;">Sign Out</button>
+        `;
+    }
+}
+
+// Handle sign out
+window.handleSignOut = async function() {
+    if (confirm('Are you sure you want to sign out?')) {
+        try {
+            const { signOutUser } = await import('./src/firebase/auth.js');
+            await signOutUser();
+            window.location.href = '/auth.html';
+        } catch (error) {
+            console.error('Error signing out:', error);
+            alert('Failed to sign out. Please try again.');
+        }
+    }
+};
 
 // Add a new supply item to the specified section
 function addSupplyItem(sectionId) {
@@ -231,6 +302,15 @@ function generatePreviewContent(data) {
 async function submitOrder() {
     const formData = collectFormData();
     
+    // Check if user is authenticated
+    if (!window.currentUser) {
+        showSuccessMessage('Please sign in to submit an order.', 'error');
+        setTimeout(() => {
+            window.location.href = '/auth.html';
+        }, 2000);
+        return;
+    }
+    
     // Add loading state
     const form = document.getElementById('orderForm');
     const submitBtn = document.querySelector('.submit-btn');
@@ -242,19 +322,45 @@ async function submitOrder() {
     try {
         console.log('📤 Sending order data:', formData);
         
-        // Send to server
+        // Get user's ID token for authentication
+        let idToken = null;
+        try {
+            const { getCurrentUserToken } = await import('./src/firebase/auth.js');
+            idToken = await getCurrentUserToken();
+        } catch (error) {
+            console.warn('Could not get auth token:', error);
+        }
+        
+        // Send to server with user information
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+        
+        if (idToken) {
+            headers['Authorization'] = `Bearer ${idToken}`;
+        }
+        
         const response = await fetch('/api/submit-order', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers,
             body: JSON.stringify({
+                // User Information (from Firebase Auth)
+                userId: window.currentUser.uid,
+                userName: window.currentUser.displayName,
+                userEmail: window.currentUser.email,
+                userPhone: window.currentUser.phoneNumber,
+                userRole: window.currentUser.role,
+                
+                // Order Details
                 employeeName: formData.employeeName,
                 store: formData.store,
                 orderDate: formData.orderDate,
                 officeSupplies: formData.officeSupplies,
                 cleaningSupplies: formData.cleaningSupplies,
-                additionalNotes: formData.notes
+                additionalNotes: formData.notes,
+                
+                // Metadata
+                totalItems: formData.officeSupplies.length + formData.cleaningSupplies.length
             })
         });
         
@@ -282,7 +388,31 @@ async function submitOrder() {
         }
         
         if (result.success) {
-            // Save to localStorage as backup
+            // Save to Firestore if available
+            try {
+                const { createOrder } = await import('./src/firebase/firestore.js');
+                await createOrder({
+                    userId: window.currentUser.uid,
+                    userName: window.currentUser.displayName,
+                    userEmail: window.currentUser.email,
+                    userPhone: window.currentUser.phoneNumber,
+                    store: formData.store,
+                    orderDate: formData.orderDate,
+                    officeSupplies: formData.officeSupplies,
+                    cleaningSupplies: formData.cleaningSupplies,
+                    additionalNotes: formData.notes,
+                    emailSent: true,
+                    emailSentAt: new Date(),
+                    emailMessageId: result.messageId,
+                    totalItems: formData.officeSupplies.length + formData.cleaningSupplies.length
+                });
+                console.log('✅ Order saved to Firestore');
+            } catch (firestoreError) {
+                console.warn('⚠️ Could not save to Firestore:', firestoreError);
+                // Continue anyway - email was sent successfully
+            }
+            
+            // Also save to localStorage as backup
             saveOrderToStorage({
                 ...formData,
                 emailSent: true,
@@ -297,6 +427,18 @@ async function submitOrder() {
             // Set date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('orderDate').value = today;
+            
+            // Pre-fill employee name again
+            if (window.currentUser) {
+                const employeeNameInput = document.getElementById('employeeName');
+                if (employeeNameInput) {
+                    employeeNameInput.value = window.currentUser.displayName;
+                }
+                // Pre-fill store if user has one
+                if (window.currentUser.store) {
+                    document.getElementById('store').value = window.currentUser.store;
+                }
+            }
             
             // Clear dynamic items and add default ones
             document.getElementById('officeSupplies').innerHTML = '';
