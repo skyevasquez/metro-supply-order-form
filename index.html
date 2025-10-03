@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Metro by T-Mobile supply order form - streamlined ordering for store locations">
+    <meta name="keywords" content="metro, t-mobile, supply, order, form, store">
+    <meta name="author" content="Metro Wireless Plus">
+    <title>Supply Order Form - Metro by T-Mobile</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <main class="container">
+        <header class="app-header">
+            <div class="header-inner">
+                <div class="header-content">
+                    <h1>Metro Supply Orders</h1>
+                    <p>Streamlined ordering for Metro by T-Mobile locations</p>
+                </div>
+                <div class="header-meta" aria-label="System status">V1 • Secure submission</div>
+            </div>
+        </header>
+
+        <section class="form-container">
+            <form id="orderForm" class="order-form" novalidate aria-labelledby="formTitle">
+                <h2 id="formTitle" class="visually-hidden">Supply Order Form</h2>
+
+                <!-- Basic Information Section -->
+                <section class="form-section" aria-labelledby="orderInfoTitle">
+                    <h2 id="orderInfoTitle">Order Information</h2>
+
+                    <div class="form-group">
+                        <label for="employeeName">Employee Name <span class="required" aria-label="required">*</span></label>
+                        <input
+                            type="text"
+                            id="employeeName"
+                            name="employeeName"
+                            required
+                            aria-describedby="employeeNameHelp"
+                            autocomplete="name"
+                        >
+                        <small id="employeeNameHelp" class="form-help">Enter your full name as it appears on your employee record</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="store">Select Store <span class="required" aria-label="required">*</span></label>
+                        <select
+                            id="store"
+                            name="store"
+                            required
+                            aria-describedby="storeHelp"
+                        >
+                            <option value="">Choose a store...</option>
+                            <option value="ARCHER">ARCHER</option>
+                            <option value="NEWBERRY">NEWBERRY</option>
+                            <option value="CHIEFLAND">CHIEFLAND</option>
+                            <option value="INVERNESS">INVERNESS</option>
+                            <option value="HOMOSASSA">HOMOSASSA</option>
+                            <option value="CRYSTAL RIVER">CRYSTAL RIVER</option>
+                        </select>
+                        <small id="storeHelp" class="form-help">Select your primary store location</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orderDate">Order Date <span class="required" aria-label="required">*</span></label>
+                        <input
+                            type="date"
+                            id="orderDate"
+                            name="orderDate"
+                            required
+                            aria-describedby="orderDateHelp"
+                        >
+                        <small id="orderDateHelp" class="form-help">Date when supplies are needed</small>
+                    </div>
+                </section>
+
+                <!-- Office Supplies Section -->
+                <section class="form-section" aria-labelledby="officeSuppliesTitle">
+                    <h2 id="officeSuppliesTitle">Office Supplies</h2>
+                    <div
+                        id="officeSupplies"
+                        class="supplies-container"
+                        role="group"
+                        aria-label="Office supplies items"
+                    >
+                        <div class="supply-item">
+                            <div class="supply-inputs">
+                                <input
+                                    type="text"
+                                    placeholder="Item name"
+                                    class="item-name"
+                                    aria-label="Office supply item name"
+                                    required
+                                >
+                                <input
+                                    type="number"
+                                    placeholder="Quantity"
+                                    class="item-quantity"
+                                    min="1"
+                                    aria-label="Office supply quantity"
+                                    required
+                                >
+                                <button
+                                    type="button"
+                                    class="remove-item"
+                                    onclick="removeSupplyItem(this)"
+                                    aria-label="Remove this office supply item"
+                                >Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        class="add-item-btn"
+                        onclick="addSupplyItem('officeSupplies')"
+                        aria-label="Add another office supply item"
+                    >+ Add Office Supply</button>
+                </section>
+
+                <!-- Cleaning Supplies Section -->
+                <section class="form-section" aria-labelledby="cleaningSuppliesTitle">
+                    <h2 id="cleaningSuppliesTitle">Cleaning Supplies</h2>
+                    <div
+                        id="cleaningSupplies"
+                        class="supplies-container"
+                        role="group"
+                        aria-label="Cleaning supplies items"
+                    >
+                        <div class="supply-item">
+                            <div class="supply-inputs">
+                                <input
+                                    type="text"
+                                    placeholder="Item name"
+                                    class="item-name"
+                                    aria-label="Cleaning supply item name"
+                                    required
+                                >
+                                <input
+                                    type="number"
+                                    placeholder="Quantity"
+                                    class="item-quantity"
+                                    min="1"
+                                    aria-label="Cleaning supply quantity"
+                                    required
+                                >
+                                <button
+                                    type="button"
+                                    class="remove-item"
+                                    onclick="removeSupplyItem(this)"
+                                    aria-label="Remove this cleaning supply item"
+                                >Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        class="add-item-btn"
+                        onclick="addSupplyItem('cleaningSupplies')"
+                        aria-label="Add another cleaning supply item"
+                    >+ Add Cleaning Supply</button>
+                </section>
+
+                <!-- Additional Notes Section -->
+                <section class="form-section" aria-labelledby="notesTitle">
+                    <h2 id="notesTitle">Additional Notes</h2>
+                    <div class="form-group">
+                        <label for="notes">Special instructions or additional information</label>
+                        <textarea
+                            id="notes"
+                            name="notes"
+                            rows="4"
+                            placeholder="Enter any special instructions, delivery preferences, or additional information..."
+                            aria-describedby="notesHelp"
+                        ></textarea>
+                        <small id="notesHelp" class="form-help">Optional: Add any special requirements or delivery instructions</small>
+                    </div>
+                </section>
+
+                <!-- Form Actions -->
+                <div class="form-actions" role="group" aria-label="Form actions">
+                    <button type="submit" class="submit-btn primary-action">
+                        <span class="btn-text">Submit Order</span>
+                        <span class="btn-loading" aria-hidden="true">Sending...</span>
+                    </button>
+                    <button type="button" class="preview-btn secondary-action" onclick="previewOrder()">
+                        Preview Order
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Order Preview Modal -->
+        <div
+            id="previewModal"
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="previewTitle"
+            hidden
+        >
+            <div class="modal-content">
+                <header class="modal-header">
+                    <h2 id="previewTitle">Order Preview</h2>
+                    <button
+                        type="button"
+                        class="close"
+                        onclick="closePreview()"
+                        aria-label="Close preview dialog"
+                    >&times;</button>
+                </header>
+                <main id="previewContent" class="modal-body">
+                    <!-- Preview content will be inserted here -->
+                </main>
+                <footer class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closePreview()">
+                        Close
+                    </button>
+                    <button type="button" class="btn-primary" onclick="submitFromPreview()">
+                        Submit Order
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;" role="alert" aria-live="polite">
+            <div class="success-card">
+                <h3>Order Submitted Successfully!</h3>
+                <p>Your supply order has been submitted and will be processed shortly.</p>
+                <button class="success-btn" onclick="resetForm()">Submit Another Order</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-copyright">© 2025 Metro Wireless Plus</div>
+            <div class="footer-links">
+                <span>Need help? Contact IT</span>
+                <span>•</span>
+                <a href="https://ApplyLogics.com" target="_blank" rel="noopener noreferrer" aria-label="Visit ApplyLogics website">
+                    Built by ApplyLogics.com
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

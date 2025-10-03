@@ -1,0 +1,202 @@
+/* Message and notification component styles */
+
+:root {
+    --success-bg: #d4edda;
+    --success-border: #c3e6cb;
+    --success-text: #155724;
+    --error-bg: #f8d7da;
+    --error-border: #f5c6cb;
+    --error-text: #721c24;
+    --info-bg: #d1ecf1;
+    --info-border: #bee5eb;
+    --info-text: #0c5460;
+}
+
+/* Success message */
+.success-message {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    max-width: 400px;
+    z-index: 2000;
+    animation: slideInRight 0.3s ease;
+}
+
+.success-message.error {
+    --success-bg: var(--error-bg);
+    --success-border: var(--error-border);
+    --success-text: var(--error-text);
+}
+
+.success-card {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.success-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--success-text);
+    border-radius: 4px 0 0 4px;
+}
+
+.success-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--success-text);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.success-card p {
+    margin: 0 0 1rem 0;
+    color: var(--success-text);
+    line-height: 1.5;
+}
+
+.success-btn {
+    background: var(--success-text);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.success-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.success-btn:focus-visible {
+    outline: 2px solid var(--success-text);
+    outline-offset: 2px;
+}
+
+/* Alert messages */
+.alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: var(--success-bg);
+    border-color: #28a745;
+    color: var(--success-text);
+}
+
+.alert-error {
+    background: var(--error-bg);
+    border-color: #dc3545;
+    color: var(--error-text);
+}
+
+.alert-info {
+    background: var(--info-bg);
+    border-color: #17a2b8;
+    color: var(--info-text);
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #333;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    max-width: 300px;
+    animation: slideInUp 0.3s ease;
+}
+
+.toast.success {
+    background: #28a745;
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+.toast.info {
+    background: #17a2b8;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #e91e63;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .success-message,
+    .toast {
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
+
+    .success-card {
+        padding: 1rem;
+    }
+}

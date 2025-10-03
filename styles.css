@@ -1,0 +1,96 @@
+/* Main CSS file - imports all modular CSS files */
+
+/* Import variables first */
+@import url('./css/utilities/variables.css');
+
+/* Import base styles */
+@import url('./css/base/reset.css');
+@import url('./css/base/typography.css');
+
+/* Import layout */
+@import url('./css/layout/container.css');
+
+/* Import components */
+@import url('./css/components/forms.css');
+@import url('./css/components/modal.css');
+@import url('./css/components/messages.css');
+
+/* Global background animation */
+body {
+    background: var(--bg-primary);
+    min-height: 100vh;
+    padding: 20px;
+    animation: backgroundShift 8s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundShift {
+    0% {
+        background: linear-gradient(135deg, #e91e63 0%, #c2185b 25%, #ad1457 50%, #880e4f 75%, #4a0e4e 100%);
+    }
+    100% {
+        background: linear-gradient(135deg, #f06292 0%, #e91e63 25%, #c2185b 50%, #ad1457 75%, #880e4f 100%);
+    }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.d-flex { display: flex; }
+.d-block { display: block; }
+.d-none { display: none; }
+
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.mt-0 { margin-top: 0; }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .app-header {
+        background: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .add-item-btn,
+    .remove-item,
+    .submit-btn,
+    .preview-btn,
+    .close {
+        display: none !important;
+    }
+
+    .form-section {
+        break-inside: avoid;
+    }
+}
