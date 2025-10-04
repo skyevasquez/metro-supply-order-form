@@ -1,4 +1,4 @@
-import { 
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -8,7 +8,6 @@ import {
   sendEmailVerification
 } from 'firebase/auth';
 import { auth } from './config.js';
-import { createUserProfile, getUserProfile } from './firestore.js';
 
 /**
  * Register a new user
@@ -18,27 +17,44 @@ export async function registerUser(email, password, displayName, store, role = '
     // Create Firebase Auth user
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    
+
     // Update display name
     await updateProfile(user, { displayName });
-    
+
     // Send email verification
     await sendEmailVerification(user);
-    
-    // Create user profile in Firestore
-    await createUserProfile(user.uid, {
-      email,
-      displayName,
-      role,
-      store,
-      phoneNumber: '',
-      metadata: {
-        employeeId: '',
-        department: '',
-        hireDate: new Date().toISOString().split('T')[0]
-      }
-    });
-    
+
+    // Try to create user profile in Firestore, fallback to localStorage
+    try {
+      const { createUserProfile } = await import('./firestore.js');
+      await createUserProfile(user.uid, {
+        email,
+        displayName,
+        role,
+        store,
+        phoneNumber: '',
+        metadata: {
+          employeeId: '',
+          department: '',
+          hireDate: new Date().toISOString().split('T')[0]
+        }
+      });
+    } catch (firestoreError) {
+      console.warn('Firestore not available, using localStorage for user profile');
+      localStorage.setItem(`user_profile_${user.uid}`, JSON.stringify({
+        email,
+        displayName,
+        role,
+        store,
+        phoneNumber: '',
+        metadata: {
+          employeeId: '',
+          department: '',
+          hireDate: new Date().toISOString().split('T')[0]
+        }
+      }));
+    }
+
     console.log('✅ User registered successfully');
     return { success: true, user };
   } catch (error) {
@@ -81,8 +97,16 @@ export async function signOutUser() {
 export function onAuthChange(callback) {
   return onAuthStateChanged(auth, async (user) => {
     if (user) {
-      // User is signed in
-      const userProfile = await getUserProfile(user.uid);
+      // User is signed in, try to get profile from Firestore or localStorage
+      let userProfile = null;
+      try {
+        const { getUserProfile } = await import('./firestore.js');
+        userProfile = await getUserProfile(user.uid);
+      } catch (firestoreError) {
+        console.warn('Firestore not available, getting user profile from localStorage');
+        const stored = localStorage.getItem(`user_profile_${user.uid}`);
+        userProfile = stored ? JSON.parse(stored) : null;
+      }
       callback({ user, profile: userProfile });
     } else {
       // User is signed out
